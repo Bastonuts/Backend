@@ -30,7 +30,7 @@ async def insert_data(data_sensor: sensor):
 		INSERT INTO datos_baston (latitud, longitud, posicion, fecha, alerta)
 		VALUES (%s, %s, %s, %s, %s)
     """
-	values = (5, 6, "Hola", datetime.now(), 1)
+	values = (data.lon, data.lat, data.pos, datetime.now(), data.ult)
 	try:
 		with db.cursor() as cursor:
 			cursor.execute(query, values)
@@ -41,7 +41,7 @@ async def insert_data(data_sensor: sensor):
 		return {"error": str(e)}
 	finally:
 		cursor.close()
-	return sensor
+	#return sensor
 	
 if __name__ == "__main__":
 	port = int(os.getenv("PORT", 8080))  # 🚀 Usa el puerto que asigna Railway
