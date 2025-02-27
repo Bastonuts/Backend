@@ -30,7 +30,7 @@ async def insert_data(data_sensor: sensor):
 		INSERT INTO datos_baston (latitud, longitud, posicion, fecha, alerta)
 		VALUES (%s, %s, %s, %s, %s)
     """
-	values = (data.lon, data.lat, data.pos, datetime.now(), data.ult)
+	values = (data_sensor.lon, data_sensor.lat, data_sensor.pos, datetime.now(), data_sensor.ult)
 	try:
 		with db.cursor() as cursor:
 			cursor.execute(query, values)
