@@ -9,7 +9,7 @@ class sensor(BaseModel):
 
 app = FastAPI()
 
-@router.post("/data")
+@app.post("/data")
 async def insert_data(data_sensor: sensor):
 	"""
 	Inserta los datos a la base de datos
