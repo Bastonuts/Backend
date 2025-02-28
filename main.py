@@ -17,7 +17,7 @@ class sensor(BaseModel):
 	lon: float
 	lat: float
 	pos: str
-	ult: float
+	alm: int
 app = FastAPI()
 
 @app.post("/data")
