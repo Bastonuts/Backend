@@ -44,5 +44,5 @@ async def insert_data(data_sensor: sensor):
 	#return sensor
 	
 if __name__ == "__main__":
-	port = int(os.getenv("PORT", 8080))  # 🚀 Usa el puerto que asigna Railway
+	port = int(os.getenv("PORT", 3306))  # 🚀 Usa el puerto que asigna Railway
 	uvicorn.run(app, host="0.0.0.0", port=port)
