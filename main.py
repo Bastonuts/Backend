@@ -26,6 +26,22 @@ async def insert_data(data_sensor: sensor):
 	#Inserta los datos a la base de datos
 	#"""
 	cursor = db.cursor()
+	nombre_tabla = "datos_baston"
+
+	# Crear la tabla si no existe
+	crear_tabla_sql = f"""
+		CREATE TABLE IF NOT EXISTS {nombre_tabla} (
+			id INT AUTO_INCREMENT PRIMARY KEY,
+			latitud DECIMAL(9,7) NOT NULL,
+			longitud DECIMAL(9,7) NOT NULL,
+			posicion VARCHAR(12) DEFAULT NULL,
+			fecha DATETIME NOT NULL,
+			alerta INT NOT NULL
+		)
+		"""
+
+	cursor.execute(crear_tabla_sql)
+
 	query = """
 		INSERT INTO datos_baston (latitud, longitud, posicion, fecha, alerta)
 		VALUES (%s, %s, %s, %s, %s)
