@@ -6,7 +6,7 @@ import mysql.connector
 from datetime import datetime
 
 db = mysql.connector.connect(
-	host=os.getenv("MYSQL_URL"),
+	host=os.getenv("MYSQLHOST"),
 	user=os.getenv("MYSQL_USER"),
 	password=os.getenv("MYSQL_ROOT_PASSWORD"),
 	database=os.getenv("MYSQL_DATABASE"),
