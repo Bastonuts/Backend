@@ -35,7 +35,7 @@ async def insert_data(data_sensor: sensor):
 				id INT AUTO_INCREMENT PRIMARY KEY,
 				latitud DECIMAL(9,7) NOT NULL,
 				longitud DECIMAL(9,7) NOT NULL,
-				posicion VARCHAR(12) DEFAULT NULL,
+				posicion VARCHAR(16) DEFAULT NULL,
 				fecha DATETIME NOT NULL,
 				alerta INT NOT NULL
 			)
@@ -61,7 +61,35 @@ async def insert_data(data_sensor: sensor):
 	except Exception as e:
 		return {"error": str(e)}
 	#return sensor
-	
+
+@app.delete("/delete_table")
+async def delete_tabla(name_table:str):
+	"""Elimina una tabla si existe"""
+	try:
+		cursor = db.cursor()
+		query = "DROP TABLE IF EXISTS `{}`".format(name_table)
+		cursor.execute(query)
+		db.commit()
+		return {"message": f"Tabla '{name_table}' eliminada correctamente"}
+	except Exception as e:
+		raise HTTPException(status_code=500, detail=str(e))
+	finally:
+		cursor.close()
+
+@app.post("/modifique_table")
+async def delete_tabla(name_table:str):
+	"""Modifica la estructura de la tabla"""
+	try:
+		cursor = db.cursor()
+		query = "ALTER TABLE `{}` MODIFY COLUMN posicion VARCHAR(16)".format(name_table)
+		cursor.execute(query)
+		db.commit()
+		return {"message": f"Tabla '{name_table}' modificada correctamente"}
+	except Exception as e:
+		raise HTTPException(status_code=500, detail=str(e))
+	finally:
+		cursor.close()
+
 if __name__ == "__main__":
 	port = int(os.getenv("PORT", 8080))  # 🚀 Usa el puerto que asigna Railway
 	uvicorn.run(app, host="0.0.0.0", port=port)
