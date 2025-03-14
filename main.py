@@ -20,6 +20,9 @@ class sensor(BaseModel):
 	alarm: int
 app = FastAPI()
 
+class TableName(BaseModel):
+    name_table: str
+
 @app.post("/data")
 async def insert_data(data_sensor: sensor):
 	#"""
@@ -63,32 +66,22 @@ async def insert_data(data_sensor: sensor):
 	#return sensor
 
 @app.delete("/delete_table")
-async def delete_tabla(name_table:str):
+async def delete_tabla(table: TableName):
 	"""Elimina una tabla si existe"""
-	try:
-		cursor = db.cursor()
-		query = "DROP TABLE IF EXISTS `{}`".format(name_table)
-		cursor.execute(query)
-		db.commit()
-		return {"message": f"Tabla '{name_table}' eliminada correctamente"}
-	except Exception as e:
-		raise HTTPException(status_code=500, detail=str(e))
-	finally:
-		cursor.close()
+	cursor = db.cursor()
+	query = f"DROP TABLE IF EXISTS `{table.name_table}`"
+	cursor.execute(query)
+	db.commit()
+	return {"message": f"Tabla '{table.name_table}' eliminada correctamente"}
 
 @app.post("/modifique_table")
-async def delete_tabla(name_table:str):
+async def delete_tabla(table: TableName):
 	"""Modifica la estructura de la tabla"""
-	try:
-		cursor = db.cursor()
-		query = "ALTER TABLE `{}` MODIFY COLUMN posicion VARCHAR(16)".format(name_table)
-		cursor.execute(query)
-		db.commit()
-		return {"message": f"Tabla '{name_table}' modificada correctamente"}
-	except Exception as e:
-		raise HTTPException(status_code=500, detail=str(e))
-	finally:
-		cursor.close()
+	cursor = db.cursor()
+	query = f"ALTER TABLE `{table.name_table}` MODIFY COLUMN posicion VARCHAR(16);"
+	cursor.execute(query)
+	db.commit()
+	return {"message": f"Tabla '{table.name_table}' modificada correctamente"}
 
 if __name__ == "__main__":
 	port = int(os.getenv("PORT", 8080))  # 🚀 Usa el puerto que asigna Railway
