@@ -5,13 +5,17 @@ from pydantic import BaseModel
 import mysql.connector
 from datetime import datetime
 
-db = mysql.connector.connect(
-	host=os.getenv("MYSQLHOST"),
-	user=os.getenv("MYSQL_USER"),
-	password=os.getenv("MYSQL_ROOT_PASSWORD"),
-	database=os.getenv("MYSQL_DATABASE"),
-	port=int(os.getenv("MYSQL_PORT", 3306))
-)
+def get_db_connection():
+	try:
+		return mysql.connector.connect(
+			host=os.getenv("MYSQLHOST"),
+			user=os.getenv("MYSQL_USER"),
+			password=os.getenv("MYSQL_ROOT_PASSWORD"),
+			database=os.getenv("MYSQL_DATABASE"),
+			port=int(os.getenv("MYSQL_PORT", 3306))
+		)
+	except:
+		return None
 
 class sensor(BaseModel):
 	lon: float
@@ -21,7 +25,7 @@ class sensor(BaseModel):
 app = FastAPI()
 
 class TableName(BaseModel):
-    name_table: str
+	name_table: str
 
 @app.post("/data")
 async def insert_data(data_sensor: sensor):
@@ -29,6 +33,7 @@ async def insert_data(data_sensor: sensor):
 	#Inserta los datos a la base de datos
 	#"""
 	try:
+		db = get_db_connection()
 		cursor = db.cursor()
 		nombre_tabla = "datos_baston"
 
@@ -67,21 +72,29 @@ async def insert_data(data_sensor: sensor):
 
 @app.delete("/delete_table")
 async def delete_tabla(table: TableName):
-	"""Elimina una tabla si existe"""
-	cursor = db.cursor()
-	query = f"DROP TABLE IF EXISTS `{table.name_table}`"
-	cursor.execute(query)
-	db.commit()
-	return {"message": f"Tabla '{table.name_table}' eliminada correctamente"}
+	try:
+		"""Elimina una tabla si existe"""
+		db = get_db_connection()
+		cursor = db.cursor()
+		query = f"DROP TABLE IF EXISTS `{table.name_table}`"
+		cursor.execute(query)
+		db.commit()
+		return {"message": f"Tabla '{table.name_table}' eliminada correctamente"}
+	except Exception as e:
+		return {"error": str(e)}
 
 @app.post("/modifique_table")
 async def delete_tabla(table: TableName):
-	"""Modifica la estructura de la tabla"""
-	cursor = db.cursor()
-	query = f"ALTER TABLE `{table.name_table}` MODIFY COLUMN posicion VARCHAR(16);"
-	cursor.execute(query)
-	db.commit()
-	return {"message": f"Tabla '{table.name_table}' modificada correctamente"}
+	try:
+		"""Modifica la estructura de la tabla"""
+		db = get_db_connection()
+		cursor = db.cursor()
+		query = f"ALTER TABLE `{table.name_table}` MODIFY COLUMN posicion VARCHAR(16);"
+		cursor.execute(query)
+		db.commit()
+		return {"message": f"Tabla '{table.name_table}' modificada correctamente"}
+	except Exception as e:
+		return {"error": str(e)}
 
 if __name__ == "__main__":
 	port = int(os.getenv("PORT", 8080))  # 🚀 Usa el puerto que asigna Railway
